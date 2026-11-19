@@ -1,0 +1,38 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{{ p.name }} {{ p.weight.grams }} {% t "unit.g" %}{% endblock %}
+{% block description %}{{ p.description|default:p.name|truncatechars:150 }}{% endblock %}
+{% block content %}
+<section class="wrap product" style="--c:{{ p.flavor.color }}">
+  <div class="product__art">{% pack p "lg" %}
+    {% if p.images.all %}<div class="thumbs">{% for im in p.images.all %}<a href="{{ im.image.url }}" target="_blank" rel="noopener"><img src="{{ im.image.url }}" alt="{{ p.name }}" loading="lazy"></a>{% endfor %}</div>{% endif %}
+  </div>
+  <div>
+    <p class="crumbs"><a href="{% url "catalog" %}">{% t "nav.catalog" %}</a> / {{ p.weight.grams }} {% t "unit.g" %}</p>
+    <h1>{{ p.name }}</h1>
+    <p class="card__meta">{{ p.flavor.name }} <span class="heat">{% heat p.flavor.heat %}</span></p>
+    {% if p.description %}<div class="prose">{{ p.description|linebreaks }}</div>{% endif %}
+    <table class="spec">
+      <tr><th>{% t "spec.pack_weight" %}</th><td>{{ p.weight.grams }} {% t "unit.g" %}</td></tr>
+      {% if p.weight.package_note %}<tr><th>{% t "spec.package" %}</th><td>{{ p.weight.package_note }}</td></tr>{% endif %}
+      <tr><th>{% t "spec.packs_box" %}</th><td>{% if p.packs_per_box %}{{ p.packs_per_box }}{% else %}{% t "spec.tbd" %}{% endif %}</td></tr>
+      <tr><th>{% t "spec.box_dims" %}</th><td>{% if p.has_dimensions %}{{ p.box_length_cm|floatformat }} × {{ p.box_width_cm|floatformat }} × {{ p.box_height_cm|floatformat }} {% t "unit.cm" %}{% else %}{% t "spec.tbd" %}{% endif %}</td></tr>
+      <tr><th>{% t "spec.gross" %}</th><td>{% if p.gross_weight_kg %}{{ p.gross_weight_kg|floatformat:"-2" }} {% t "unit.kg" %}{% else %}{% t "spec.tbd" %}{% endif %}</td></tr>
+      <tr><th>{% t "spec.volume" %}</th><td>{% if p.volume_m3 %}{{ p.volume_m3|floatformat:"-4" }} {% t "unit.m3" %}{% else %}{% t "spec.tbd" %}{% endif %}</td></tr>
+      {% if p.boxes_per_pallet %}<tr><th>{% t "spec.pallet" %}</th><td>{{ p.boxes_per_pallet }}</td></tr>{% endif %}
+    </table>
+    <div class="pricebox">
+      {% if price %}
+        <span>{% t "col.price_box" %}</span><b>{{ price.price|num:2 }} {{ price.country.currency.code }}</b>
+        <a class="btn btn--fire" href="{% url "calculator" %}?add={{ p.pk }}">{% t "product.to_calc" %}</a>
+      {% elif has_access %}
+        <span>{% t "product.no_price" %}</span>
+      {% else %}
+        <span class="lock">🔒 {% t "product.locked" %}</span>
+        <a class="btn btn--fire" href="{% url "register" %}?next={{ request.path }}">{% t "product.unlock" %}</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% if related %}<section class="wrap sec"><header class="sec__hd"><h2>{% t "product.related" %}</h2></header>
+<div class="grid">{% for p in related %}{% include "_card.html" %}{% endfor %}</div></section>{% endif %}
+{% endblock %}

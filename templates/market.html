@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% load site static %}
+{% block title %}{{ country.landing_title|default:country.name }}{% endblock %}
+{% block description %}{{ country.landing_text|truncatechars:155 }}{% endblock %}
+{% block content %}
+<section class="hero hero--sm">
+  <div class="hero__bg"><canvas class="hero__embers" id="embers" aria-hidden="true"></canvas><div class="hero__flames" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  <div class="wrap hero__in">
+    <p class="eyebrow">{{ site.brand_name }} · {{ country.name }}</p>
+    <h1><span>{% if country.landing_title %}{{ country.landing_title }}{% else %}{% t "market.h1" %} {{ country.name }}{% endif %}</span></h1>
+    <p class="hero__lead">{% if country.landing_text %}{{ country.landing_text }}{% else %}{% t "market.lead" %}{% endif %}</p>
+    <div class="hero__btns">
+      <a class="btn btn--fire btn--lg" href="{% url "register" %}?country={{ country.code }}">{% t "market.cta" %} {{ country.currency.code }}</a>
+      <a class="btn btn--ghost btn--lg" href="{% url "calculator" %}">{% t "nav.calculator" %}</a>
+    </div>
+  </div>
+</section>
+<section class="wrap sec">
+  <header class="sec__hd"><h2>{% t "range.title" %}</h2></header>
+  <div class="grid">{% for p in featured %}{% include "_card.html" %}{% endfor %}</div>
+</section>
+<section class="wrap sec">
+  <div class="why">
+    <article><b>01</b><h3>{% t "why.1.t" %}</h3><p>{% t "why.1.d" %}</p></article>
+    <article><b>02</b><h3>{% t "why.2.t" %}</h3><p>{% t "why.2.d" %}</p></article>
+    <article><b>03</b><h3>{% t "why.3.t" %}</h3><p>{% t "why.3.d" %}</p></article>
+    <article><b>04</b><h3>{% t "why.4.t" %}</h3><p>{% t "why.4.d" %}</p></article>
+  </div>
+</section>
+{% include "_cta.html" %}
+{% endblock %}

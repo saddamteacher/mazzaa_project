@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{% t "prices.title" %}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="page-hd"><div class="wrap">
+  <h1>{% t "prices.title" %}: {{ country.name }}</h1>
+  <p>{% t "prices.lead" %} <b>{{ country.currency.code }}</b>{% if site.price_terms %} · {{ site.price_terms }}{% endif %}</p>
+  <p class="btns"><a class="btn btn--fire" href="{% url "calculator" %}">{% t "nav.calculator" %}</a>
+  <a class="btn btn--ghost" href="{% url "prices_download" "xlsx" %}" data-track="download_price">Excel ↓</a>
+  <a class="btn btn--ghost" href="{% url "prices_download" "pdf" %}" data-track="download_price">PDF ↓</a></p>
+</div></section>
+<section class="wrap sec" data-track-view="view_price_list">
+  {% if rows %}
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>{% t "col.product" %}</th><th>{% t "col.pack_g" %}</th><th>{% t "col.packs_box" %}</th><th>{% t "col.price_box" %}, {{ country.currency.code }}</th><th></th></tr></thead>
+    <tbody>{% for r in rows %}<tr>
+      <td><a href="{% url "product" r.product.slug %}">{{ r.product.name }}</a></td>
+      <td>{{ r.product.weight.grams }}</td>
+      <td>{{ r.product.packs_per_box|default:"—" }}</td>
+      <td class="tbl__price">{{ r.price|num:2 }}</td>
+      <td><a class="link" href="{% url "calculator" %}?add={{ r.product.pk }}">{% t "product.to_calc" %}</a></td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  <p class="muted small">{% t "doc.price_note" %}</p>
+  {% else %}<p class="note">{% t "prices.empty" %}</p>{% endif %}
+  <div class="access">
+    <p>{% t "prices.link_hint" %}</p>
+    <input readonly value="{{ request.scheme }}://{{ request.get_host }}{% url "access_link" dealer.token %}" onclick="this.select()">
+    <form method="post" action="{% url "logout" %}">{% csrf_token %}<button class="link">{% t "prices.logout" %}</button></form>
+  </div>
+</section>
+{% endblock %}

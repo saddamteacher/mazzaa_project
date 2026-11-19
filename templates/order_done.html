@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{% t "done.title" %}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="wrap narrow sec center" id="order-done">
+  <p class="eyebrow">{% t "done.number" %} {{ order.number }}</p>
+  <h1>{% t "done.title" %}</h1>
+  <p class="lead">{% t "done.text" %}</p>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>{% t "col.product" %}</th><th>{% t "col.boxes" %}</th><th>{% t "col.price_box" %}</th><th>{% t "col.amount" %}, {{ order.currency }}</th></tr></thead>
+    <tbody>{% for i in order.items.all %}<tr><td>{{ i.name }}</td><td>{{ i.boxes }}</td><td>{{ i.price|num:2 }}</td><td class="tbl__price">{{ i.amount|num:2 }}</td></tr>{% endfor %}</tbody>
+    <tfoot><tr><th>{% t "calc.total" %}</th><th>{{ order.total_boxes }}</th><th></th><th class="tbl__price">{{ order.total_amount|num:2 }} {{ order.currency }}</th></tr></tfoot>
+  </table></div>
+  <p class="muted">{% t "calc.weight" %}: {{ order.total_weight_kg|num:1 }} {% t "unit.kg" %} · {% t "calc.volume" %}: {{ order.total_volume_m3|num:2 }} {% t "unit.m3" %}</p>
+  <p class="btns"><a class="btn btn--ghost" href="{% url "order_offer" order.number "pdf" %}">PDF ↓</a>
+  <a class="btn btn--ghost" href="{% url "order_offer" order.number "xlsx" %}">Excel ↓</a>
+  <a class="btn btn--fire" href="{% url "catalog" %}">{% t "banner.catalog" %}</a></p>
+</section>
+{% endblock %}

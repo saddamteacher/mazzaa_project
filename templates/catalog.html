@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{% t "catalog.title" %}{% endblock %}
+{% block content %}
+<section class="page-hd"><div class="wrap"><h1>{% t "catalog.title" %}</h1><p>{% t "catalog.lead" %}</p>
+<nav class="tabs">{% for w in weights %}<a href="#w{{ w.grams }}">{{ w.grams }} {% t "unit.g" %}</a>{% endfor %}</nav></div></section>
+{% for w in weights %}
+<section class="wrap sec" id="w{{ w.grams }}">
+  <header class="sec__hd sec__hd--row"><h2>{{ w.grams }} {% t "unit.g" %}</h2><p>{{ w.package_note }}</p></header>
+  <div class="grid">{% for p in w.items %}{% include "_card.html" %}{% endfor %}</div>
+</section>
+{% endfor %}
+{% if not has_access %}<p class="wrap note">{% t "catalog.price_note" %} <a href="{% url "register" %}">{% t "cta.become" %} →</a></p>{% endif %}
+{% include "_cta.html" %}
+{% endblock %}

@@ -1,0 +1,102 @@
+{% load static site %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE|default:request.LANGUAGE_CODE }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{% t "meta.title" %}{% endblock %} — {{ site.brand_name }}</title>
+<meta name="description" content="{% block description %}{% t "meta.description" %}{% endblock %}">
+<meta name="theme-color" content="#0d0605">
+{% if site.gsc_verification %}<meta name="google-site-verification" content="{{ site.gsc_verification }}">{% endif %}
+{% block robots %}{% endblock %}
+<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+{% for code, name in LANGS %}<link rel="alternate" hreflang="{{ code }}" href="{{ request.scheme }}://{{ request.get_host }}{% lang_url code %}">
+{% endfor %}<link rel="alternate" hreflang="x-default" href="{{ request.scheme }}://{{ request.get_host }}{% lang_url "en" %}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ site.brand_name }} — {% t "meta.title" %}">
+<meta property="og:description" content="{% t "meta.description" %}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static "img/logo.jpg" %}">
+<link rel="icon" href="{% static "img/favicon.svg" %}" type="image/svg+xml">
+<link rel="preload" href="{% static "fonts/unbounded-cyrillic-900-normal.woff2" %}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{% static "css/site.css" %}">
+{{ analytics|json_script:"mz-config" }}
+{{ track_events|json_script:"mz-events" }}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g-chip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc24a"/><stop offset=".55" stop-color="#f08a1c"/><stop offset="1" stop-color="#c9520d"/></linearGradient>
+    <linearGradient id="g-fire" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#e5171e"/><stop offset=".6" stop-color="#ff7a00"/><stop offset="1" stop-color="#ffd400"/></linearGradient>
+    <symbol id="chip" viewBox="0 0 100 100">
+      <path d="M14 8 Q50 0 86 8 Q98 12 94 50 Q98 88 86 92 Q50 100 14 92 Q2 88 6 50 Q2 12 14 8Z" fill="url(#g-chip)"/>
+      <g stroke="#b3470a" stroke-width="2.4" stroke-linecap="round" opacity=".55"><path d="M22 14V86M34 11V89M46 10V90M58 10V90M70 11V89M82 14V86"/></g>
+      <g fill="#c0180f"><circle cx="28" cy="30" r="2.2"/><circle cx="64" cy="22" r="1.8"/><circle cx="52" cy="58" r="2.4"/><circle cx="76" cy="70" r="2"/><circle cx="36" cy="76" r="1.7"/></g>
+      <path d="M14 8 Q50 0 86 8" stroke="#ffe39a" stroke-width="3" fill="none" opacity=".7"/>
+    </symbol>
+    <symbol id="stick" viewBox="0 0 160 30"><rect x="2" y="4" width="156" height="22" rx="7" fill="url(#g-chip)"/><rect x="8" y="7" width="144" height="5" rx="2.5" fill="#ffe39a" opacity=".55"/></symbol>
+    <symbol id="flame" viewBox="0 0 200 240"><path d="M100 4C118 40 148 50 158 84c14-10 20-24 19-36 24 36 22 82 13 102 16-8 6 30-10 50-16 24-46 34-80 34s-64-10-80-34c-16-20-26-58-10-50C1 130-1 84 23 48c-1 12 5 26 19 36C52 50 82 40 100 4Z"/></symbol>
+  </defs>
+</svg>
+
+<header class="hdr" id="hdr">
+  <a class="hdr__logo" href="{% url "home" %}" aria-label="{{ site.brand_name }}">
+    {% if site.logo %}<img src="{{ site.logo.url }}" alt="{{ site.brand_name }}" height="56">{% else %}<img src="{% static "img/logo.webp" %}" alt="{{ site.brand_name }}" width="900" height="553">{% endif %}
+  </a>
+  <button class="hdr__burger" aria-label="Menu" aria-expanded="false" id="burger"><span></span><span></span><span></span></button>
+  <nav class="hdr__nav" id="nav">
+    <a href="{% url "catalog" %}">{% t "nav.catalog" %}</a>
+    <a href="{% url "calculator" %}">{% t "nav.calculator" %}</a>
+    <a href="{% url "marketing" %}">{% t "nav.marketing" %}</a>
+    <a href="{% url "prices" %}">{% t "nav.prices" %}</a>
+    <span class="lang">
+      {% for code, name in LANGS %}<a href="{% lang_url code %}" hreflang="{{ code }}" {% if code == request.LANGUAGE_CODE %}class="on" aria-current="true"{% endif %}>{{ code|upper }}</a>{% endfor %}
+    </span>
+    {% if dealer %}
+      <a class="chip-user" href="{% url "prices" %}" title="{{ dealer.company }}">{{ dealer.company|truncatechars:18 }}</a>
+    {% else %}
+      <a class="btn btn--fire btn--sm" href="{% url "register" %}">{% t "cta.become" %}</a>
+    {% endif %}
+  </nav>
+</header>
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="ftr">
+  <div class="wrap ftr__grid">
+    <div>
+      <img class="ftr__logo" src="{% static "img/logo.webp" %}" alt="{{ site.brand_name }}" width="900" height="553" loading="lazy">
+      <p class="muted">{% t "footer.tagline" %}</p>
+      <p class="muted">© {% now "Y" %} {{ site.company_name }}</p>
+    </div>
+    <div>
+      <h4>{% t "footer.sections" %}</h4>
+      <a href="{% url "catalog" %}">{% t "nav.catalog" %}</a>
+      <a href="{% url "calculator" %}">{% t "nav.calculator" %}</a>
+      <a href="{% url "marketing" %}">{% t "nav.marketing" %}</a>
+      <a href="{% url "register" %}">{% t "cta.become" %}</a>
+      <a href="{% url "privacy" %}">{% t "footer.privacy" %}</a>
+    </div>
+    <div>
+      <h4>{% t "footer.contacts" %}</h4>
+      {% if site.phone %}<a href="tel:{{ site.phone|cut:" " }}" data-track="click_phone">{{ site.phone }}</a>{% endif %}
+      {% if site.email %}<a href="mailto:{{ site.email }}">{{ site.email }}</a>{% endif %}
+      {% if site.whatsapp %}<a href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener" data-track="click_whatsapp">WhatsApp</a>{% endif %}
+      {% if site.telegram %}<a href="https://t.me/{{ site.telegram }}" target="_blank" rel="noopener" data-track="click_telegram">Telegram</a>{% endif %}
+      {% if site.instagram %}<a href="{{ site.instagram }}" target="_blank" rel="noopener" data-track="click_instagram">Instagram</a>{% endif %}
+      {% if site.address %}<p class="muted">{{ site.address }}</p>{% endif %}
+    </div>
+  </div>
+</footer>
+
+{% if site.whatsapp %}<a class="fab" href="https://wa.me/{{ site.whatsapp }}" target="_blank" rel="noopener" data-track="click_whatsapp" aria-label="WhatsApp">
+  <svg viewBox="0 0 32 32" width="30" height="30" fill="#fff"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3Zm0 2.4a10.6 10.6 0 1 1-5.6 19.6l-.4-.3-3.7 1 1-3.6-.3-.4A10.6 10.6 0 0 1 16 5.400Zm-4.300 5.300c-.3 0-.7 0-1 .5-.4.400-1.400 1.300-1.400 3.200s1.400 3.700 1.600 4c.200.300 2.700 4.300 6.700 5.900 3.300 1.300 4 1 4.700 1 .700-.1 2.300-1 2.600-1.900.300-.900.300-1.700.200-1.900-.1-.200-.4-.300-.800-.500l-2.700-1.300c-.4-.1-.6-.2-.9.200l-1.200 1.500c-.2.300-.5.300-.9.100-.4-.2-1.700-.6-3.200-2a12 12 0 0 1-2.200-2.800c-.2-.4 0-.6.200-.8l.6-.7c.2-.2.3-.4.400-.7.100-.3 0-.5 0-.7l-1.200-2.900c-.3-.7-.6-.6-.8-.6Z"/></svg>
+</a>{% endif %}
+
+<div class="cookie" id="cookie" hidden>
+  <p>{% t "cookie.text" %} <a href="{% url "privacy" %}">{% t "footer.privacy" %}</a></p>
+  <div><button class="btn btn--ghost btn--sm" data-consent="denied">{% t "cookie.deny" %}</button>
+  <button class="btn btn--fire btn--sm" data-consent="granted">{% t "cookie.accept" %}</button></div>
+</div>
+<script src="{% static "js/site.js" %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

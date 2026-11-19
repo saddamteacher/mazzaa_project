@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{% t "pending.title" %}{% endblock %}
+{% block robots %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="wrap narrow center sec">
+  <h1>{% t "pending.title" %}</h1>
+  <p class="lead">{% if dealer.status == "rejected" %}{% t "pending.rejected" %}{% else %}{% t "pending.text" %}{% endif %}</p>
+  <p><a class="btn btn--fire" href="{% url "catalog" %}">{% t "banner.catalog" %}</a>
+  <a class="btn btn--ghost" href="{% url "calculator" %}">{% t "nav.calculator" %}</a></p>
+</section>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}{% load site static %}
+{% block title %}{% t "mkt.title" %}{% endblock %}
+{% block content %}
+<section class="page-hd"><div class="wrap"><h1>{% t "mkt.title" %}</h1><p>{% t "mkt.lead" %}</p></div></section>
+<section class="wrap sec">
+  <div class="why">
+    <article><b>01</b><h3>{% t "mkt.1.t" %}</h3><p>{% t "mkt.1.d" %}</p></article>
+    <article><b>02</b><h3>{% t "mkt.2.t" %}</h3><p>{% t "mkt.2.d" %}</p></article>
+    <article><b>03</b><h3>{% t "mkt.3.t" %}</h3><p>{% t "mkt.3.d" %}</p></article>
+    <article><b>04</b><h3>{% t "mkt.4.t" %}</h3><p>{% t "mkt.4.d" %}</p></article>
+  </div>
+</section>
+{% for key, items in groups %}{% if items %}
+<section class="wrap sec">
+  <header class="sec__hd sec__hd--row"><h2>{% t "mkt.kind."|add:key %}</h2></header>
+  <div class="grid grid--mkt">
+  {% for m in items %}
+    <article class="mcard">
+      {% if m.preview %}<img src="{{ m.preview.url }}" alt="{{ m.title }}" loading="lazy">{% else %}<div class="mcard__ph"><svg viewBox="0 0 100 100" width="64"><use href="#chip"/></svg></div>{% endif %}
+      <h3>{{ m.title }}</h3>
+      {% if m.description %}<p>{{ m.description|linebreaksbr }}</p>{% endif %}
+      <p class="btns">
+      {% if m.video_url %}<a class="btn btn--ghost btn--sm" href="{{ m.video_url }}" target="_blank" rel="noopener" data-track="marketing_video">{% t "mkt.watch" %} ▶</a>{% endif %}
+      {% if m.file %}<a class="btn btn--fire btn--sm" href="{% url "marketing_download" m.pk %}" data-track="marketing_download">{% if m.dealers_only and not dealer %}🔒 {% endif %}{% t "mkt.download" %} ↓</a>{% endif %}
+      </p>
+    </article>
+  {% endfor %}
+  </div>
+</section>
+{% endif %}{% endfor %}
+{% if not has_materials %}<p class="wrap note">{% t "mkt.soon" %}</p>{% endif %}
+{% include "_cta.html" %}
+{% endblock %}

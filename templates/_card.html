@@ -1,0 +1,7 @@
+{% load site %}<a class="card" href="{% url "product" p.slug %}" style="--c:{{ p.flavor.color }}">
+  {% pack p %}
+  <span class="card__w">{{ p.weight.grams }} {% t "unit.g" %}</span>
+  <h3>{{ p.name }}</h3>
+  <p class="card__meta">{{ p.flavor.name }} <span class="heat">{% heat p.flavor.heat %}</span></p>
+  <p class="card__box">{% if p.packs_per_box %}{{ p.packs_per_box }} {% t "unit.pcs_box" %}{% else %}{% t "spec.tbd" %}{% endif %}</p>
+</a>

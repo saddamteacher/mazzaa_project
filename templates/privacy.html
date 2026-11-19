@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% load site %}
+{% block title %}{% t "footer.privacy" %}{% endblock %}
+{% block content %}
+<section class="wrap narrow sec prose">
+  <h1>{% t "footer.privacy" %}</h1>
+  {% if site.privacy_text %}{{ site.privacy_text|linebreaks }}{% else %}
+  <p>{% t "privacy.p1" %}</p><p>{% t "privacy.p2" %}</p><p>{% t "privacy.p3" %}</p><p>{% t "privacy.p4" %}</p>
+  {% endif %}
+  <h2>Cookie</h2>
+  <p>{% t "privacy.cookies" %}</p>
+  <p><button class="btn btn--ghost btn--sm" id="cookie-reset">{% t "privacy.cookie_reset" %}</button></p>
+</section>
+{% endblock %}

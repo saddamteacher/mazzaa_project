@@ -1,0 +1,57 @@
+{% extends "base.html" %}{% load static site %}
+{% block title %}{% t "calc.title" %}{% endblock %}
+{% block content %}
+<section class="page-hd"><div class="wrap"><h1>{% t "calc.title" %}</h1><p>{% t "calc.lead" %}</p></div></section>
+<section class="wrap calc" id="calc" data-api="{% url "api_calc" %}" data-access="{{ has_access|yesno:"1,0" }}" data-currency="{{ currency }}">
+  <div class="calc__list">
+    {% if not has_access %}<p class="note">🔒 {% t "calc.locked" %} <a href="{% url "register" %}?next={{ request.path }}">{% t "product.unlock" %} →</a></p>{% endif %}
+    {% for w in weights %}
+    <h2>{{ w.grams }} {% t "unit.g" %} <small>{{ w.package_note }}</small></h2>
+    {% for p in w.items %}
+    <div class="row" data-id="{{ p.pk }}" style="--c:{{ p.flavor.color }}">
+      {% pack p "xs" %}
+      <div class="row__name"><b>{{ p.name }}</b>
+        <small>{% if p.packs_per_box %}{{ p.packs_per_box }} {% t "unit.pcs_box" %}{% endif %}{% if p.gross_weight_kg %} · {{ p.gross_weight_kg|floatformat:"-2" }} {% t "unit.kg" %}{% endif %}{% if p.volume_m3 %} · {{ p.volume_m3|floatformat:"-4" }} {% t "unit.m3" %}{% endif %}</small></div>
+      <div class="row__price">{% if p.price %}{{ p.price|num:2 }} <small>{{ currency }}</small>{% else %}<small>{% t "calc.price_hidden" %}</small>{% endif %}</div>
+      <div class="stepper"><button type="button" data-step="-1" aria-label="−">−</button><input type="number" min="0" max="100000" step="1" value="0" inputmode="numeric" aria-label="{% t "col.boxes" %}: {{ p.name }}"><button type="button" data-step="1" aria-label="+">+</button></div>
+    </div>
+    {% endfor %}{% endfor %}
+  </div>
+  <aside class="calc__sum" id="sum">
+    <h2>{% t "calc.your" %}</h2>
+    <p class="calc__empty" id="sum-empty">{% t "calc.empty" %}</p>
+    <ul class="calc__lines" id="sum-lines"></ul>
+    <dl class="calc__totals" id="sum-totals" hidden>
+      <div><dt>{% t "col.boxes" %}</dt><dd id="t-boxes">0</dd></div>
+      <div class="big"><dt>{% t "calc.total" %}</dt><dd id="t-amount">—</dd></div>
+      <div><dt>{% t "calc.weight" %}</dt><dd id="t-weight">—</dd></div>
+      <div><dt>{% t "calc.volume" %}</dt><dd id="t-volume">—</dd></div>
+      <div><dt>{% t "calc.pallets" %}</dt><dd id="t-pallets">—</dd></div>
+    </dl>
+    <div id="sum-cont" hidden>
+      <div class="cont"><span>{% t "calc.container" %} 20′</span><b id="c20">—</b><i><u id="c20bar"></u></i></div>
+      <div class="cont"><span>{% t "calc.container" %} 40′</span><b id="c40">—</b><i><u id="c40bar"></u></i></div>
+      <p class="muted small">{% t "calc.disclaimer" %}</p>
+    </div>
+    <div id="sum-actions" hidden>
+      {% if has_access %}
+      <form method="post" action="{% url "order_submit" %}" id="order-form">{% csrf_token %}
+        <input type="hidden" name="items">
+        <textarea name="comment" rows="2" placeholder="{% t "calc.comment" %}"></textarea>
+        <button class="btn btn--fire btn--block btn--lg" type="submit">{% t "calc.send" %}</button>
+      </form>
+      <div class="calc__dl">
+        <form method="post" action="{% url "offer" "pdf" %}">{% csrf_token %}<input type="hidden" name="items"><button class="btn btn--ghost btn--sm" data-track="download_offer">{% t "calc.offer" %} PDF ↓</button></form>
+        <form method="post" action="{% url "offer" "xlsx" %}">{% csrf_token %}<input type="hidden" name="items"><button class="btn btn--ghost btn--sm" data-track="download_offer">Excel ↓</button></form>
+      </div>
+      {% else %}
+      {% csrf_token %}
+      <a class="btn btn--fire btn--block btn--lg" href="{% url "register" %}?next={{ request.path }}">{% t "calc.register_to_send" %}</a>
+      {% endif %}
+      <button type="button" class="link" id="clear">{% t "calc.clear" %}</button>
+    </div>
+  </aside>
+</section>
+{{ labels|json_script:"calc-labels" }}
+{% endblock %}
+{% block scripts %}<script src="{% static "js/calculator.js" %}" defer></script>{% endblock %}

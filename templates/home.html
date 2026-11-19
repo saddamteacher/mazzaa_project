@@ -1,0 +1,112 @@
+{% extends "base.html" %}{% load static site %}
+{% block body_class %}is-home{% endblock %}
+{% block content %}
+<section class="hero" id="hero">
+  <div class="hero__bg">
+    {% if site.hero_video %}<video class="hero__video" autoplay muted loop playsinline preload="metadata" src="{{ site.hero_video.url }}"></video>{% endif %}
+    <canvas class="hero__embers" id="embers" aria-hidden="true"></canvas>
+    <div class="hero__flames" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="scene" aria-hidden="true">
+    <svg class="fly" data-depth=".9" data-rot="40" style="left:6%;top:18%;width:11vmax"><use href="#chip"/></svg>
+    <svg class="fly" data-depth=".35" data-rot="-70" style="left:16%;top:64%;width:6vmax"><use href="#chip"/></svg>
+    <svg class="fly blur" data-depth="1.5" data-rot="120" style="left:-3%;top:44%;width:17vmax"><use href="#chip"/></svg>
+    <svg class="fly" data-depth=".6" data-rot="-30" style="right:8%;top:14%;width:8vmax"><use href="#chip"/></svg>
+    <svg class="fly" data-depth="1.1" data-rot="80" style="right:3%;top:58%;width:13vmax"><use href="#chip"/></svg>
+    <svg class="fly" data-depth=".45" data-rot="-140" style="right:24%;top:76%;width:5vmax"><use href="#chip"/></svg>
+    <svg class="fly blur" data-depth="1.7" data-rot="-60" style="right:-5%;top:30%;width:18vmax"><use href="#stick"/></svg>
+    <svg class="fly" data-depth=".7" data-rot="150" style="left:30%;top:8%;width:9vmax"><use href="#stick"/></svg>
+    <img class="fly" data-depth="1.2" data-rot="25" style="left:58%;top:60%;width:20vmax" src="{% static "img/chili.webp" %}" alt="">
+  </div>
+  <div class="wrap hero__in">
+    <p class="eyebrow">{{ site.company_name }} · {% t "hero.eyebrow" %}</p>
+    <h1><span>{% t "hero.h1a" %}</span> <em>{% t "hero.h1b" %}</em></h1>
+    <p class="hero__lead">{% t "hero.lead" %}</p>
+    <div class="hero__btns">
+      <a class="btn btn--fire btn--lg" href="{% url "register" %}">{% t "cta.become" %}</a>
+      <a class="btn btn--ghost btn--lg" href="{% url "catalog" %}">{% t "banner.catalog" %}</a>
+    </div>
+    <ul class="hero__facts">
+      <li><b>14</b>{% t "fact.sku" %}</li>
+      <li><b>4</b>{% t "fact.weights" %}</li>
+      <li><b>10+</b>{% t "fact.markets" %}</li>
+    </ul>
+  </div>
+  <a class="hero__scroll" href="#banners" aria-label="Scroll"><span></span></a>
+</section>
+
+<section class="wrap banners" id="banners">
+  {% for b in banners %}
+  <a class="banner banner--{{ b.theme }} tilt" href="{% local_link b.link %}" data-track="banner_click" data-reveal>
+    {% if b.image %}<img class="banner__img" src="{{ b.image.url }}" alt="" loading="lazy">{% else %}
+    <span class="banner__art" aria-hidden="true">
+      {% if forloop.counter == 1 %}<img src="{% static "img/chips.webp" %}" alt="" loading="lazy">
+      {% elif forloop.counter == 2 %}<svg viewBox="0 0 120 120"><rect x="14" y="8" width="92" height="104" rx="12" fill="#0d0605"/><rect x="24" y="18" width="72" height="24" rx="5" fill="#ffd400"/><g fill="#ff7a00"><rect x="24" y="52" width="20" height="16" rx="4"/><rect x="50" y="52" width="20" height="16" rx="4"/><rect x="76" y="52" width="20" height="16" rx="4"/><rect x="24" y="74" width="20" height="16" rx="4"/><rect x="50" y="74" width="20" height="16" rx="4"/></g><rect x="76" y="74" width="20" height="28" rx="4" fill="#e5171e"/><rect x="24" y="96" width="46" height="8" rx="4" fill="#ff7a00"/></svg>
+      {% else %}<svg viewBox="0 0 120 120"><path d="M14 46 78 20v80L14 74Z" fill="#ffd400"/><rect x="78" y="14" width="12" height="92" rx="6" fill="#0d0605"/><path d="M26 76h18l6 28H36Z" fill="#0d0605"/><path d="M98 44l14-8M100 60h16M98 76l14 8" stroke="#0d0605" stroke-width="6" stroke-linecap="round"/></svg>{% endif %}
+    </span>{% endif %}
+    <span class="banner__n">0{{ forloop.counter }}</span>
+    <h2>{{ b.title }}</h2>
+    <p>{{ b.subtitle }}</p>
+    <span class="banner__go">→</span>
+  </a>
+  {% endfor %}
+</section>
+
+<section class="wrap sec" id="range">
+  <header class="sec__hd" data-reveal><h2>{% t "range.title" %}</h2><p>{% t "range.text" %}</p></header>
+  <div class="weights">
+    {% for w in weights %}<a class="weight" href="{% url "catalog" %}#w{{ w.grams }}" data-reveal><b>{{ w.grams }}</b><span>{% t "unit.g" %}</span><small>{{ w.package_note }}</small></a>{% endfor %}
+  </div>
+  <div class="grid">{% for p in featured %}<div data-reveal>{% include "_card.html" %}</div>{% endfor %}</div>
+  <p class="center"><a class="btn btn--ghost" href="{% url "catalog" %}">{% t "range.all" %} →</a></p>
+</section>
+
+<section class="depth" id="depth" aria-hidden="true">
+  <div class="depth__stage">
+    <svg class="fly" data-depth="-1.4" data-rot="200" style="left:4%;top:20%;width:14vmax"><use href="#chip"/></svg>
+    <svg class="fly blur" data-depth="-2.2" data-rot="-160" style="left:22%;top:60%;width:22vmax"><use href="#chip"/></svg>
+    <svg class="fly" data-depth="-.7" data-rot="90" style="left:44%;top:12%;width:8vmax"><use href="#stick"/></svg>
+    <svg class="fly" data-depth="-1.1" data-rot="-110" style="right:20%;top:52%;width:12vmax"><use href="#chip"/></svg>
+    <svg class="fly blur" data-depth="-2.6" data-rot="140" style="right:-4%;top:10%;width:24vmax"><use href="#chip"/></svg>
+    <svg class="fly" data-depth="-.5" data-rot="-45" style="right:38%;top:74%;width:6vmax"><use href="#chip"/></svg>
+    <img class="fly" data-depth="-1.6" data-rot="-35" style="right:6%;top:48%;width:22vmax" src="{% static "img/chili.webp" %}" alt="" loading="lazy">
+    <p class="depth__word" data-depth="-.25">{% t "depth.word" %}</p>
+  </div>
+</section>
+
+<section class="wrap sec">
+  <header class="sec__hd" data-reveal><h2>{% t "why.title" %}</h2><p>{% t "why.text" %}</p></header>
+  <div class="why">
+    <article data-reveal><b>01</b><h3>{% t "why.1.t" %}</h3><p>{% t "why.1.d" %}</p></article>
+    <article data-reveal><b>02</b><h3>{% t "why.2.t" %}</h3><p>{% t "why.2.d" %}</p></article>
+    <article data-reveal><b>03</b><h3>{% t "why.3.t" %}</h3><p>{% t "why.3.d" %}</p></article>
+    <article data-reveal><b>04</b><h3>{% t "why.4.t" %}</h3><p>{% t "why.4.d" %}</p></article>
+  </div>
+</section>
+
+<section class="wrap sec">
+  <header class="sec__hd" data-reveal><h2>{% t "steps.title" %}</h2></header>
+  <ol class="steps">
+    <li data-reveal><h3>{% t "steps.1.t" %}</h3><p>{% t "steps.1.d" %}</p></li>
+    <li data-reveal><h3>{% t "steps.2.t" %}</h3><p>{% t "steps.2.d" %}</p></li>
+    <li data-reveal><h3>{% t "steps.3.t" %}</h3><p>{% t "steps.3.d" %}</p></li>
+    <li data-reveal><h3>{% t "steps.4.t" %}</h3><p>{% t "steps.4.d" %}</p></li>
+  </ol>
+</section>
+
+<section class="wrap sec">
+  <header class="sec__hd" data-reveal><h2>{% t "markets.title" %}</h2><p>{% t "markets.text" %}</p></header>
+  <div class="markets" data-reveal>
+    {% for c in markets %}<a href="{% if c.landing_enabled %}{% url "market" c.code %}{% else %}{% url "register" %}?country={{ c.code }}{% endif %}"><b>{{ c.name }}</b><span>{{ c.currency.code }}</span></a>{% endfor %}
+  </div>
+</section>
+
+<section class="wrap sec about" id="about">
+  <div data-reveal>
+    <h2>{{ site.about_title|default:site.company_name }}</h2>
+    {{ site.about_text|linebreaks }}
+  </div>
+  <div class="about__art" data-reveal><img src="{% static "img/logo.webp" %}" alt="{{ site.brand_name }}" loading="lazy" width="900" height="553"><img class="about__chips" src="{% static "img/chips.webp" %}" alt="" loading="lazy" width="900" height="601"></div>
+</section>
+{% include "_cta.html" %}
+{% endblock %}
